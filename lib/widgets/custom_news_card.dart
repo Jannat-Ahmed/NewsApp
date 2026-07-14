@@ -36,6 +36,7 @@ class CustomNewsCard extends StatelessWidget {
         ),
         subtitle: Text(
           news.content,
+          maxLines: 2,
           style: TextStyle(
             fontSize: 15,
           ),
