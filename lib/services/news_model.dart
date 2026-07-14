@@ -1,23 +1,29 @@
-import 'package:hive/hive.dart';
-import 'package:news_app/services/auth.dart';
-@HiveType(typeId: 0)
-class NewsModel extends HiveObject{
-  @HiveField(0)String newsTitle;
-  @HiveField(1)String newsContent;
-  @HiveField(2)String newsImage;
+class NewsModel {
+  final String content;
+  final String title;
+  final String imageUrl;
 
   NewsModel({
-    required this.newsTitle,
-    required this.newsContent,
-    required this.newsImage,
-});
+    required this.content,
+    required this.title,
+    required this.imageUrl,
+  });
 
-  final List<Map<String, dynamic>> data = await supabase
-      .from('countries')
-      .select();
-  // final supa=Supabase.instance.client;
-  //
-  // getNews(){
-  // return supa.from("News").select();
-  // }
+  factory NewsModel.fromJson(Map<String, dynamic> json) {
+    return NewsModel(
+      title: json['Title']??"",
+      content: json['Content']??"",
+      imageUrl: json['Image']??"",
+
+
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Content': content,
+      'Title': title,
+      'Image': imageUrl,
+    };
+  }
 }

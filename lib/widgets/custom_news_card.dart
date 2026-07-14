@@ -1,41 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/services/news_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CustomNewsCard extends StatelessWidget {
-  const CustomNewsCard({super.key,
-  this.onTap});
+  final NewsModel news;
+   CustomNewsCard({super.key,
+  this.onTap, required this.news});
   //final NewsModel news;
 
   final void Function()? onTap;
+  final imageUrl = Supabase.instance.client.storage
+      .from('News')
+      .getPublicUrl('Images');
 
   @override
   Widget build(BuildContext context ) {
-    return ListTile(
-      onTap:onTap,
-      leading: Container(
-        height: 90,
-        width: 90,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: ListTile(
+        onTap:onTap,
+        leading: Container(
+          height: 80,
+          width: 80,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3),
+            image: DecorationImage(image: NetworkImage(news.imageUrl),fit:BoxFit.cover )
+          ),
 
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(3),
-          image: DecorationImage(image: NetworkImage("https://img.magnific.com/free-vector/news-grunge-text_460848-9369.jpg?semt=ais_hybrid&w=740&q=80"),fit:BoxFit.cover )
         ),
-
-      ),
-      title:Text(" New CNN NEWs",
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-      ),
-      ),
-      subtitle: Text(
-        "Source of news",
+        title:Text(news.title,
         style: TextStyle(
-          fontSize: 15,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
+        ),
+        subtitle: Text(
+          news.content,
+          style: TextStyle(
+            fontSize: 15,
+          ),
         ),
       ),
     );
   }
 }
 
-class NewsModel {
-}
+

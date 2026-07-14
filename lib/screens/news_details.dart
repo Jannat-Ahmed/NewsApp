@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/services/news_model.dart';
 
 class NewsDetails extends StatelessWidget {
-  const NewsDetails({super.key});
+  final NewsModel news;
+  const NewsDetails({super.key,required this.news});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,7 @@ class NewsDetails extends StatelessWidget {
         backgroundColor: Color(0xFF08113B),
         leading: IconButton(
             onPressed: (){
-              // Navigator.pop(context);
+               Navigator.pop(context);
             },
             icon: Icon(Icons.arrow_back,color: Colors.white,size: 30,)
         ),
@@ -23,31 +25,29 @@ class NewsDetails extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Padding(
           padding: const EdgeInsets.only(top: 100),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
                Image(image:
-               NetworkImage("https://img.magnific.com/free-vector/news-grunge-text_460848-9369.jpg?semt=ais_hybrid&w=740&q=80",
-
-
-        ),
+               NetworkImage(news.imageUrl),
                  width: double.infinity,
                  fit: BoxFit.cover,
-                 height: 400,
+                 height: 500,
           ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Title",
+                    Text(news.title,
                       style:TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 30,
                       ) ,),
-                    Text("News  Title Title Title TitleTitle TitleTitleTitleTitleTitleTitle TitleTitleTitleTitle TitleTitle TitleTitleTitleTitleTitle TitleTitleTitleTitleTitleTitleTitleTitleTitle TitleTitle Title Title",
+                    Text(news.content,
                     style: TextStyle(fontSize:20,fontWeight: FontWeight.w500 ),)
                   ],
                 ),

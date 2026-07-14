@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/widgets/custom_news_card.dart';
-
+import 'package:news_app/screens/news_details.dart';
+import 'package:news_app/widgets/custom_news_card.dart' hide NewsModel;
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/news_model.dart';
+import 'package:news_app/services/auth.dart';
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+   HomePage({super.key});
 
+  final response = Supabase.instance.client
+      .from('News')
+      .select();
+
+  late final news = (response as List)
+      .map((e) => NewsModel.fromJson(e)).toList();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,14 +44,40 @@ class HomePage extends StatelessWidget {
             ],
           ),
           Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
+            child: FutureBuilder(
+              future: AuthSupa().fetchUsers(),
               //physics: NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              itemBuilder:  (context, index) {
-                return CustomNewsCard();
-              },
-              itemCount: 30,
+
+               builder:(context, snapshot) {
+                 if (snapshot.connectionState == ConnectionState.waiting) {
+                   return const Center(child: CircularProgressIndicator());
+                 }
+                 if (snapshot.hasError) {
+                   return Center(child: Text(snapshot.error.toString()));
+                 }
+                 if (!snapshot.hasData) {
+                   return const Center(child: Text('No data'));
+                 }
+                 final news = snapshot.data!;
+
+                 return ListView.builder(
+
+                     itemCount: news.length,
+                  itemBuilder: (context, index) {
+                  return CustomNewsCard(
+                    news: news[index],
+                      onTap: (){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder:
+                        (context)=>NewsDetails(news: news[index]),
+                        )
+                      );
+                      },
+                  );
+                     }
+
+                 );
+},
             ),
           ),
         ],
