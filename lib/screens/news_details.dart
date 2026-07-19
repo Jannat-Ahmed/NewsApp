@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/services/news_model.dart';
+import 'package:news_app/models/news_model.dart';
 
 class NewsDetails extends StatelessWidget {
   final NewsModel news;
@@ -8,7 +8,6 @@ class NewsDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation:0 ,
         backgroundColor: Color(0xFF08113B),
@@ -26,35 +25,34 @@ class NewsDetails extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 100),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-               Image(image:
-               NetworkImage(news.imageUrl),
-                 width: double.infinity,
-                 fit: BoxFit.cover,
-                 height: 500,
-          ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(news.title,
-                      style:TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 30,
-                      ) ,),
-                    Text(news.content,
-                    style: TextStyle(fontSize:20,fontWeight: FontWeight.w500 ),)
-                  ],
-                ),
-              ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+             Image(image:
+             NetworkImage(news.imageUrl),
+               width: double.infinity,
+               height: 400,
+               fit: BoxFit.fill,
 
-            ],
-          ),
+             ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(news.title,
+                    style:TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 30,
+                    ) ,),
+                  SizedBox(height: 10),
+                  Text(news.content,
+                  style: TextStyle(fontSize:20,height: 2 ,fontWeight: FontWeight.normal ),)
+                ],
+              ),
+            ),
+
+          ],
         ),
       ),
     );

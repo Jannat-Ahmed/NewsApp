@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/services/news_model.dart';
+import 'package:news_app/models/news_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CustomNewsCard extends StatelessWidget {
@@ -20,8 +20,8 @@ class CustomNewsCard extends StatelessWidget {
       child: ListTile(
         onTap:onTap,
         leading: Container(
-          height: 80,
           width: 80,
+          height: 350,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(3),
             image: DecorationImage(image: NetworkImage(news.imageUrl),fit:BoxFit.cover )

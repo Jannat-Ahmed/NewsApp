@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/screens/news_details.dart';
 import 'package:news_app/widgets/custom_news_card.dart' hide NewsModel;
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../services/news_model.dart';
-import 'package:news_app/services/auth.dart';
-class HomePage extends StatelessWidget {
+import '../cubit/news_cubit.dart';
+class HomePage extends StatefulWidget {
    HomePage({super.key});
 
-  final response = Supabase.instance.client
-      .from('News')
-      .select();
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
 
-  late final news = (response as List)
-      .map((e) => NewsModel.fromJson(e)).toList();
+
+class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<NewsCubit>().getNews();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,40 +50,35 @@ class HomePage extends StatelessWidget {
             ],
           ),
           Expanded(
-            child: FutureBuilder(
-              future: AuthSupa().fetchUsers(),
-              //physics: NeverScrollableScrollPhysics(),
-
-               builder:(context, snapshot) {
-                 if (snapshot.connectionState == ConnectionState.waiting) {
-                   return const Center(child: CircularProgressIndicator());
-                 }
-                 if (snapshot.hasError) {
-                   return Center(child: Text(snapshot.error.toString()));
-                 }
-                 if (!snapshot.hasData) {
-                   return const Center(child: Text('No data'));
-                 }
-                 final news = snapshot.data!;
-
-                 return ListView.builder(
-
-                     itemCount: news.length,
-                  itemBuilder: (context, index) {
-                  return CustomNewsCard(
-                    news: news[index],
-                      onTap: (){
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder:
-                        (context)=>NewsDetails(news: news[index]),
-                        )
-                      );
+            child: BlocBuilder<NewsCubit,NewsState>(
+                builder: (context,state){
+                  if(state is NewsLoading){
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if(state is NewsSuccess){
+                    return RefreshIndicator(
+                      onRefresh: ()async{
+                        await context.read<NewsCubit>().getNews();
                       },
-                  );
-                     }
-
-                 );
-},
+                      child: ListView.builder(
+                        itemCount: state.news.length,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          itemBuilder:(context,index){
+                            return CustomNewsCard(
+                              news: state.news[index],
+                              onTap: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_)=>NewsDetails(news: state.news[index])));
+                              },
+                            );
+                          } ),
+                    );
+                  }
+                  return SizedBox();
+                },
             ),
           ),
         ],
